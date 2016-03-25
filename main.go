@@ -21,11 +21,15 @@ func aggregate() error {
 	for _, path := range os.Args[1:] {
 		c, err := luminosity.OpenCatalog(path)
 		if err != nil {
-			return err
+			fmt.Fprintf(os.Stderr, "Error opening catalog %s; %s. Catalog will be ignored.\n",
+				path, err)
+			continue
 		}
 		err = c.Load()
 		if err != nil {
-			return err
+			fmt.Fprintf(os.Stderr, "Error loading catalog %s; %s. Catalog will be ignored.\n",
+				path, err)
+			continue
 		}
 		merged.Merge(c)
 	}
