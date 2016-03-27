@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/aalpern/luminosity"
 )
@@ -31,13 +34,19 @@ func aggregate() error {
 				path, err)
 			continue
 		}
+
+		jsPath := strings.Replace(filepath.Base(path), ".lrcat", ".json", 1)
+		write(jsPath, c)
+
 		merged.Merge(c)
 	}
-	print(merged)
+
+	write("merged.json", merged)
+
 	return nil
 }
 
-func print(data interface{}) {
+func write(path string, data interface{}) {
 	js, _ := json.MarshalIndent(data, "", "  ")
-	fmt.Println(string(js))
+	ioutil.WriteFile(path, js, 0644)
 }
